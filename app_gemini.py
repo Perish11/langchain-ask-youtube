@@ -1,4 +1,5 @@
 
+from decouple import config
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
@@ -15,18 +16,10 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 # Import YouTubeLoader
 from langchain_community.document_loaders import YoutubeLoader
 
-st.title("Ask YouTube Video")
+GOOGLE_GEMINI_KEY = 'AIzaSyBfo-T7y0fs5YvXAhjXpihz6JOp9Ms5EOs'
 
-#with st.sidebar:
-#    st.title("Add Your API Key First")
-#    google_gemini_key = st.text_input("Google Gemini API Key", type="password")
-#if not google_gemini_key:
-#   st.info("Enter your Google Gemini API Key to continue")
-#    st.stop()
-
-google_gemini_key='AIzaSyBfo-T7y0fs5YvXAhjXpihz6JOp9Ms5EOs'
 llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-pro-latest", google_api_key=google_gemini_key
+    model="gemini-1.5-pro-latest", google_api_key=GOOGLE_GEMINI_KEY
 )
 
 contextualize_system_prompt = """Given a chat history and the latest user question \
@@ -41,13 +34,13 @@ contextualize_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-system_prompt = """You are an assistant for question-answering tasks. \
+system_prompt = ("""You are an assistant for question-answering tasks. \
 Use the following pieces of retrieved context to answer \
 the question. If you don't know the answer, say that you \
 don't know. Use three sentences maximum and keep the \
 answer concise. \
 \n\n \
-{context}"""
+{context}""")
 
 prompt = ChatPromptTemplate.from_messages(
     [
@@ -72,7 +65,9 @@ def process_youtube_url(url):
                 chunk_size=1000, chunk_overlap=200
             )
             chunks = text_splitter.split_documents(docs)
-            embeddings = GoogleGenerativeAIEmbeddings(google_api_key=google_gemini_key)
+            embeddings = GoogleGenerativeAIEmbeddings(
+                google_api_key=GOOGLE_GEMINI_KEY, model="models/embedding-001"
+            )
             vector_store = Chroma.from_documents(chunks, embeddings)
             retriever = vector_store.as_retriever()
             history_aware_retriever = create_history_aware_retriever(
@@ -98,6 +93,8 @@ def clear_history():
     if "langchain_messages" in st.session_state:
         del st.session_state["langchain_messages"]
 
+
+st.title("Ask YouTube Video")
 
 youtube_url = st.text_input("Input YouTube URL")
 submit_button = st.button("Submit Video", on_click=clear_history)
