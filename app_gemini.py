@@ -17,13 +17,14 @@ from langchain_community.document_loaders import YoutubeLoader
 
 st.title("Ask YouTube Video")
 
-with st.sidebar:
-    st.title("Add Your API Key First")
-    google_gemini_key = st.text_input("Google Gemini API Key", type="password")
-if not google_gemini_key:
-    st.info("Enter your Google Gemini API Key to continue")
-    st.stop()
+#with st.sidebar:
+#    st.title("Add Your API Key First")
+#    google_gemini_key = st.text_input("Google Gemini API Key", type="password")
+#if not google_gemini_key:
+#   st.info("Enter your Google Gemini API Key to continue")
+#    st.stop()
 
+google_gemini_key='AIzaSyBfo-T7y0fs5YvXAhjXpihz6JOp9Ms5EOs'
 llm = ChatGoogleGenerativeAI(
     model="gemini-1.5-pro-latest", google_api_key=google_gemini_key
 )
