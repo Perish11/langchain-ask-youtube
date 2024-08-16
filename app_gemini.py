@@ -1,6 +1,6 @@
 __import__('pysqlite3')
 import sys
-sys.module['sqlite3']=sys.modules.pop('pysqlite3')
+sys.modules['sqlite3']=sys.modules.pop('pysqlite3')
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
